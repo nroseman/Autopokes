@@ -43,8 +43,8 @@ class Game:
             (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), self.all_sprites)
         self.enemy = Enemy(
             (WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3), self.all_sprites)
-        self.enemy = Friend(
-            (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.5), self.all_sprites)
+        self.friend = Friend(
+            (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.5), self.player, self.all_sprites)
 
     def run(self):
         while self.running:
