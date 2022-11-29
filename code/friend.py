@@ -1,5 +1,6 @@
 import pygame
 from pygame.math import Vector2 as vector
+from random import uniform
 
 
 class Friend(pygame.sprite.Sprite):
@@ -13,6 +14,8 @@ class Friend(pygame.sprite.Sprite):
         self.player = player
         self.friendzone_max = 200
         self.friendzone_min = 100
+        self.idling = False
+        self.idle_duration = 800
 
         # float based movement
         self.direction = vector()
@@ -39,9 +42,27 @@ class Friend(pygame.sprite.Sprite):
         distance, direction = self.get_player_distance_direction()
         if distance > self.friendzone_max:
             self.direction = direction
+            self.idling = False
+            self.speed = 200
             # self.status = self.status.split('_')[0]
         else:
-            self.direction = vector()
+            self.idle_walk(direction)
+
+    # random idle path while close to player
+    def idle_walk(self, direction):
+        if not self.idling:
+            self.direction = vector(uniform(-1, 1),
+                                    uniform(-1, 1))
+            self.idling = True
+            self.speed = 50
+            self.idle_start = pygame.time.get_ticks()
+
+    # timer to change idle direction
+    def idle_timer(self):
+        if self.idling:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.idle_start > self.idle_duration:
+                self.idling = False
 
     def move(self, dt):
         if self.direction.magnitude() != 0:
@@ -56,4 +77,5 @@ class Friend(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.walk_to_player()
+        self.idle_timer()
         self.move(dt)

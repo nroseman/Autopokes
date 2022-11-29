@@ -4,7 +4,9 @@ from settings import *
 from player import Player
 from enemy import Enemy
 from friend import Friend
+from sprite import SimpleSprite
 from pygame.math import Vector2 as vector
+from pytmx.util_pygame import load_pygame
 
 # creates player centered camera
 
@@ -37,14 +39,27 @@ class Game:
 
         # sprite group
         self.all_sprites = AllSprites()
+        self.obstacles = pygame.sprite.Group()
 
         # sprite setup
-        self.player = Player(
-            (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), self.all_sprites)
+        self.setup()
+        # self.player = Player(
+        #     (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), self.all_sprites)
         self.enemy = Enemy(
             (WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3), self.all_sprites)
         self.friend = Friend(
             (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.5), self.player, self.all_sprites)
+
+    def setup(self):
+        tmx_map = load_pygame('./data/map.tmx')
+
+        for x, y, surf in tmx_map.get_layer_by_name('Collision').tiles():
+            SimpleSprite((x * 16, y * 16), surf,
+                         [self.all_sprites, self.obstacles])
+
+        for obj in tmx_map.get_layer_by_name('Player'):
+            self.player = Player(
+                (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), self.all_sprites)
 
     def run(self):
         while self.running:

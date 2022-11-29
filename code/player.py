@@ -11,8 +11,7 @@ class Player(pygame.sprite.Sprite):
         # self.frame_index = 0
 
         # self.image = self.animations[self.status][self.frame_index]
-        self.image = pygame.Surface((64, 64))
-        self.image.fill('darkolivegreen2')
+        self.image = pygame.image.load('./graphics/Goblin_transparent.png')
         self.rect = self.image.get_rect(center=pos)
 
         # float based movement
