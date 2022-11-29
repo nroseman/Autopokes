@@ -15,17 +15,24 @@ class AllSprites(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
+        self.canvas = pygame.Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
+        self.bg = pygame.image.load('./graphics/map.png').convert()
         self.offset = vector()
 
     def custom_draw(self, player):
-        self.offset.x = player.rect.centerx - WINDOW_WIDTH / 2
-        self.offset.y = player.rect.centery - WINDOW_HEIGHT / 2
+        self.offset.x = player.rect.centerx - CANVAS_WIDTH / 2
+        self.offset.y = player.rect.centery - CANVAS_HEIGHT / 2
+
+        self.canvas.blit(self.bg, -self.offset)
 
         # draw sprites with offset
         for sprite in self.sprites():
             offset_rect = sprite.image.get_rect(center=sprite.rect.center)
             offset_rect.center -= self.offset
-            self.display_surface.blit(sprite.image, offset_rect)
+            self.canvas.blit(sprite.image, offset_rect)
+
+        self.display_surface.blit(pygame.transform.scale(
+            self.canvas, (WINDOW_WIDTH, WINDOW_HEIGHT)), (0, 0))
 
 
 class Game:
@@ -45,10 +52,10 @@ class Game:
         self.setup()
         # self.player = Player(
         #     (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), self.all_sprites)
-        self.enemy = Enemy(
-            (WINDOW_WIDTH / 3, WINDOW_HEIGHT / 3), self.all_sprites)
-        self.friend = Friend(
-            (WINDOW_WIDTH / 1.5, WINDOW_HEIGHT / 1.5), self.player, self.all_sprites)
+        # self.enemy = Enemy(
+        #     (CANVAS_WIDTH / 3, CANVAS_HEIGHT / 3), self.all_sprites)
+        # self.friend = Friend(
+        #     (CANVAS_WIDTH / 1.5, CANVAS_HEIGHT / 1.5), self.player, self.all_sprites)
 
     def setup(self):
         tmx_map = load_pygame('./data/map.tmx')
@@ -57,9 +64,15 @@ class Game:
             SimpleSprite((x * 16, y * 16), surf,
                          [self.all_sprites, self.obstacles])
 
-        for obj in tmx_map.get_layer_by_name('Player'):
-            self.player = Player(
-                (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), self.all_sprites)
+        for obj in tmx_map.get_layer_by_name('Entities'):
+            if obj.name == 'Player':
+                self.player = Player(
+                    (obj.x, obj.y), self.obstacles, self.all_sprites)
+            if obj.name == 'Enemy':
+                Enemy((obj.x, obj.y), self.all_sprites)
+            if obj.name == 'Friend':
+                Friend(
+                    (obj.x, obj.y), self.player, self.obstacles, self.all_sprites)
 
     def run(self):
         while self.running:
