@@ -16,7 +16,7 @@ class AllSprites(pygame.sprite.Group):
         super().__init__()
         self.display_surface = pygame.display.get_surface()
         self.canvas = pygame.Surface((CANVAS_WIDTH, CANVAS_HEIGHT))
-        self.bg = pygame.image.load('./graphics/map.png').convert()
+        self.bg = pygame.image.load('./graphics/map2.png').convert()
         self.offset = vector()
 
     def custom_draw(self, player):
@@ -58,13 +58,13 @@ class Game:
         #     (CANVAS_WIDTH / 1.5, CANVAS_HEIGHT / 1.5), self.player, self.all_sprites)
 
     def setup(self):
-        tmx_map = load_pygame('./data/map.tmx')
+        tmx_map = load_pygame('./data/map2/map2.tmx')
 
         for x, y, surf in tmx_map.get_layer_by_name('Collision').tiles():
             SimpleSprite((x * 16, y * 16), surf,
                          [self.all_sprites, self.obstacles])
 
-        for obj in tmx_map.get_layer_by_name('Entities'):
+        for obj in tmx_map.get_layer_by_name('Entity'):
             if obj.name == 'Player':
                 self.player = Player(
                     (obj.x, obj.y), self.obstacles, self.all_sprites)

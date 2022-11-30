@@ -11,7 +11,9 @@ class Player(pygame.sprite.Sprite):
         # self.frame_index = 0
 
         # self.image = self.animations[self.status][self.frame_index]
-        self.image = pygame.image.load('./graphics/Goblin_transparent.png')
+        self.image = pygame.image.load(
+            './graphics/justaguy.png').convert_alpha()
+
         self.rect = self.image.get_rect(center=pos)
 
         # float based movement
@@ -23,7 +25,6 @@ class Player(pygame.sprite.Sprite):
         self.collision_sprites = collision_sprites
         # self.z = LAYERS['Entity']
         self.hitbox = self.rect.copy()
-
     # def get_status(self):
     #     if self.direction.magnitude() == 0:
     #     self.status = self.status.split('_')[0] + '_idle'

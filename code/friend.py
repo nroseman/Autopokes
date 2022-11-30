@@ -6,14 +6,14 @@ from random import uniform
 class Friend(pygame.sprite.Sprite):
     def __init__(self, pos, player, collision_sprites, groups):
         super().__init__(groups)
-        self.image = pygame.Surface((16, 16))
-        self.image.fill('deeppink3')
+        self.image = pygame.image.load(
+            './graphics/Goblin_transparent.png').convert_alpha()
         self.rect = self.image.get_rect(center=pos)
 
         # player interaction
         self.player = player
-        self.friendzone_max = 100
-        self.friendzone_min = 50
+        self.friendzone_max = 75
+        self.friendzone_min = 20
         self.idling = False
         self.idle_duration = 800
 
