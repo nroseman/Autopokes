@@ -3,7 +3,7 @@ from pygame.math import Vector2 as vector
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos, collision_sprites, groups):
+    def __init__(self, pos, collision_sprites, warp_tiles, groups):
         super().__init__(groups)
 
         # animation
@@ -23,31 +23,18 @@ class Player(pygame.sprite.Sprite):
 
         # collisions
         self.collision_sprites = collision_sprites
+        self.warp_tiles = warp_tiles
+        self.warp = False
         # self.z = LAYERS['Entity']
         self.hitbox = self.rect.copy()
     # def get_status(self):
     #     if self.direction.magnitude() == 0:
     #     self.status = self.status.split('_')[0] + '_idle'
 
-    def input(self):
-        keys = pygame.key.get_pressed()
+    def input(self, actions):
 
-        if keys[pygame.K_RIGHT]:
-            self.status = 'right'
-            self.direction.x = 1
-        elif keys[pygame.K_LEFT]:
-            self.status = 'left'
-            self.direction.x = -1
-        else:
-            self.direction.x = 0
-        if keys[pygame.K_DOWN]:
-            self.status = 'down'
-            self.direction.y = 1
-        elif keys[pygame.K_UP]:
-            self.status = 'up'
-            self.direction.y = -1
-        else:
-            self.direction.y = 0
+        self.direction.x = actions['right'] - actions['left']
+        self.direction.y = actions['down'] - actions['up']
 
     def collision(self, direction):
         for sprite in self.collision_sprites.sprites():
@@ -68,6 +55,10 @@ class Player(pygame.sprite.Sprite):
                         self.hitbox.top = sprite.hitbox.bottom
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
+        
+        for tile in self.warp_tiles.sprites():
+            if tile.hitbox.colliderect(self.hitbox):
+                self.warp = True
 
     def move(self, dt):
         if self.direction.magnitude() != 0:
@@ -81,6 +72,6 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery = self.hitbox.centery
         self.collision('vertical')
 
-    def update(self, dt):
-        self.input()
+    def update(self, dt, actions):
+        self.input(actions)
         self.move(dt)

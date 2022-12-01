@@ -98,7 +98,7 @@ class Friend(pygame.sprite.Sprite):
         self.rect.centery = self.hitbox.centery
         self.collision('vertical')
 
-    def update(self, dt):
+    def update(self, dt, actions):
         self.walk_to_player()
         self.idle_timer()
         self.move(dt)
