@@ -9,8 +9,6 @@ from pygame.math import Vector2 as vector
 from pytmx.util_pygame import load_pygame
 
 # creates player centered camera
-
-
 class AllSprites(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
@@ -23,6 +21,7 @@ class AllSprites(pygame.sprite.Group):
         self.offset.x = player.rect.centerx - CANVAS_WIDTH / 2
         self.offset.y = player.rect.centery - CANVAS_HEIGHT / 2
 
+        # draw background first
         self.canvas.blit(self.bg, -self.offset)
 
         # draw sprites with offset
@@ -44,6 +43,10 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        # music
+        music = pygame.mixer.Sound('./sounds/KleptoLindaMountainA.wav')
+        music.play(-1)
+        
         # sprite group
         self.all_sprites = AllSprites()
         self.obstacles = pygame.sprite.Group()
@@ -62,7 +65,7 @@ class Game:
 
         for x, y, surf in tmx_map.get_layer_by_name('Collision').tiles():
             SimpleSprite((x * 16, y * 16), surf,
-                         [self.all_sprites, self.obstacles])
+                         self.obstacles)
 
         for obj in tmx_map.get_layer_by_name('Entity'):
             if obj.name == 'Player':
