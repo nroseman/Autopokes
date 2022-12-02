@@ -19,7 +19,7 @@ class Level(State):
         super().__init__(game)
         # music
         self.music = pygame.mixer.Sound('./sounds/KleptoLindaMountainA.wav')
-        self.music.play(-1)
+        # self.music.play(-1)
 
         # get level info
         self.level_info = levels[level_num]
@@ -27,6 +27,7 @@ class Level(State):
         # sprite group
         self.all_sprites = AllSprites(self.level_info['bg'])
         self.obstacles = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
         self.warp_tiles = pygame.sprite.Group()
 
         # sprite setup
@@ -49,10 +50,11 @@ class Level(State):
                 self.player = Player(
                     (obj.x, obj.y), self.obstacles, self.warp_tiles, self.all_sprites)
             if obj.name == 'Enemy':
-                Enemy((obj.x, obj.y), self.all_sprites)
+                Enemy((obj.x, obj.y), './graphics/enemy', self.obstacles, [
+                      self.enemies, self.all_sprites])
             if obj.name == 'Friend':
                 Friend(
-                    (obj.x, obj.y), self.player, self.obstacles, self.all_sprites)
+                    (obj.x, obj.y), self.player, self.enemies, self.obstacles, self.all_sprites)
 
     def update(self, dt, actions):
         self.all_sprites.update(dt, actions)

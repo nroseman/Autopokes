@@ -3,7 +3,11 @@ import sys
 
 from code.title import Title
 
+# Just Finished - basic enemy/friend interaction and enemy animation
 # TODO: Animate Entities
+# TODO: Make friend target a list (ie, self.targets = [])
+# TODO: Give maps Warp, Spawn points
+# TODO: Create game save file to save/load game states
 
 
 class Game:
