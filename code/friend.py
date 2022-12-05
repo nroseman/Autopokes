@@ -1,17 +1,22 @@
 import pygame
 from pygame.math import Vector2 as vector
+from os import walk
+from math import atan2, pi
 from random import uniform
 
 
 class Friend(pygame.sprite.Sprite):
-    def __init__(self, pos, player, enemies, collision_sprites, groups):
+    def __init__(self, pos, path, player, enemies, collision_sprites, groups):
         super().__init__(groups)
-        self.image = pygame.image.load(
-            './graphics/friend/down/0.png').convert_alpha()
-        self.rect = self.image.get_rect(center=pos)
 
-        self.health = 100
-        self.attack = 10
+        self.import_assets(path)
+
+        # animation
+        self.status = 'idle'
+        self.walk_directions = ['up', 'right', 'down', 'left', 'up']
+        self.frame_index = 0
+        self.image = self.animations[self.status][self.frame_index]
+        self.rect = self.image.get_rect(center=pos)
 
         # player interaction
         self.player = player
@@ -26,6 +31,12 @@ class Friend(pygame.sprite.Sprite):
         self.targeting = False
         self.targetzone_max = 100
 
+        # battle
+        self.attacking = False
+        self.attack_radius = 20
+        self.health = 100
+        self.power = 10
+
         # float based movement
         self.direction = vector()
         self.pos = vector(self.rect.center)
@@ -35,6 +46,20 @@ class Friend(pygame.sprite.Sprite):
         self.collision_sprites = collision_sprites
         # self.z = LAYERS['Entity']
         self.hitbox = self.rect.copy()
+
+    def import_assets(self, path):
+        # animation images
+        self.animations = {}
+        for index, folder in enumerate(walk(path)):
+            if index == 0:
+                for name in folder[1]:
+                    self.animations[name] = []
+            else:
+                for name in sorted(folder[2], key=lambda string: int(string.split('.')[0])):
+                    file_path = folder[0].replace('\\', '/') + '/' + name
+                    surf = pygame.image.load(file_path).convert_alpha()
+                    key = folder[0].split('\\')[1]
+                    self.animations[key].append(surf)
 
     def get_player_distance_direction(self):
         friend_pos = vector(self.rect.center)
@@ -74,23 +99,29 @@ class Friend(pygame.sprite.Sprite):
         else:
             return (0, 0)
 
-    def walk_decision(self):
+    def action_decision(self):
         target_distance, target_direction = self.get_target_distance_direction()
         player_distance, player_direction = self.get_player_distance_direction()
         # walk to targeted enemy
+        if self.target and target_distance <= self.attack_radius and not self.attacking:
+            self.attacking = True
+            self.frame_index = 0
+
+        # if self.attacking:
+        #     self.status = self.status.split('_')[0] + '_attack'
+
         if self.target and player_distance < self.friendzone_max:
             self.direction = target_direction
             self.idling = False
             self.speed = 25
             if not self.targeting:
-                self.target.noticed(self) # enemy starts tracking
+                self.target.noticed(self)  # enemy starts tracking
         # walk to player or idle
         elif player_distance > self.friendzone_max:
             self.direction = player_direction
             self.idling = False
             self.speed = 200
             self.targeting = False
-            # self.status = self.status.split('_')[0]
         else:
             self.idle_walk()
 
@@ -144,8 +175,32 @@ class Friend(pygame.sprite.Sprite):
         self.rect.centery = self.hitbox.centery
         self.collision('vertical')
 
+    def get_status(self):
+        # idle
+        if self.direction.x == 0 and self.direction.y == 0:
+            self.status = 'idle'
+        else:
+            # use vector to get cardinal direction
+            degree = atan2(self.direction.x, -self.direction.y)/pi*180
+            if degree < 0:
+                degree = 360 + degree
+            print(degree)
+            self.status = self.walk_directions[round(degree/90)]
+
+    def animate(self, dt):
+        current_animation = self.animations[self.status]
+
+        self.frame_index += 10 * dt
+
+        if self.frame_index >= len(current_animation):
+            self.frame_index = 0
+
+        self.image = current_animation[int(self.frame_index)]
+
     def update(self, dt, actions):
         self.get_target()
-        self.walk_decision()
+        self.action_decision()
         self.idle_timer()
+        self.get_status()
+        self.animate(dt)
         self.move(dt)

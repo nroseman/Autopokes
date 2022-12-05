@@ -84,7 +84,7 @@ class Level(State):
                       self.enemies, self.all_sprites])
             if obj.name == 'Friend':
                 Friend(
-                    (obj.x, obj.y), self.player, self.enemies, self.obstacles, self.all_sprites)
+                    (obj.x, obj.y), './graphics/friend',self.player, self.enemies, self.obstacles, self.all_sprites)
 
     def update(self, dt, actions):
         self.all_sprites.update(dt, actions)

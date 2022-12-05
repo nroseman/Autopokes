@@ -3,9 +3,12 @@ import sys
 
 from code.title import Title
 
-# Just Finished - basic enemy/friend interaction and enemy animation
-# TODO: Animate Entities
-# TODO: Animate enviro tiles (ex. water)
+# Finished: basic enemy/friend targeting and enemy animation
+# Finished: Animate enviro tiles (ex. water)
+# Finished: graphics refactoring
+# Just Finished - friend animation
+# TODO CURRENT: add friend attack mechanic
+# TODO: Animate Player
 # TODO: Make friend target a list (ie, self.targets = [])
 # TODO: Give maps Warp, Spawn points
 # TODO: Create game save file to save/load game states
