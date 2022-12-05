@@ -7,7 +7,7 @@ class Friend(pygame.sprite.Sprite):
     def __init__(self, pos, player, enemies, collision_sprites, groups):
         super().__init__(groups)
         self.image = pygame.image.load(
-            './graphics/Goblin_transparent.png').convert_alpha()
+            './graphics/friend/down/0.png').convert_alpha()
         self.rect = self.image.get_rect(center=pos)
 
         self.health = 100

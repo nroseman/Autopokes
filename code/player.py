@@ -12,7 +12,7 @@ class Player(pygame.sprite.Sprite):
 
         # self.image = self.animations[self.status][self.frame_index]
         self.image = pygame.image.load(
-            './graphics/justaguy.png').convert_alpha()
+            './graphics/player/justaguy.png').convert_alpha()
 
         self.rect = self.image.get_rect(center=pos)
 

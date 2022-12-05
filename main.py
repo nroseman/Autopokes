@@ -5,6 +5,7 @@ from code.title import Title
 
 # Just Finished - basic enemy/friend interaction and enemy animation
 # TODO: Animate Entities
+# TODO: Animate enviro tiles (ex. water)
 # TODO: Make friend target a list (ie, self.targets = [])
 # TODO: Give maps Warp, Spawn points
 # TODO: Create game save file to save/load game states
@@ -15,7 +16,7 @@ class Game:
         pygame.init()
         self.display_surface = pygame.display.set_mode(
             (1280, 720))
-        pygame.display.set_caption('AUTOPOKES')
+        # pygame.display.set_caption('AUTOPOKES')
         self.clock = pygame.time.Clock()
 
         self.dt = 0
@@ -86,6 +87,7 @@ class Game:
 
             # delta time
             self.dt = self.clock.tick() / 1000
+            pygame.display.set_caption('{0:.2f}'.format(self.clock.get_fps()))
 
             # update
             self.update()
